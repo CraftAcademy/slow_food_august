@@ -1,4 +1,5 @@
 require 'bundler'
+require 'capybara'
 Bundler.require
 Dir[File.join(File.dirname(__FILE__), 'models', '*.rb')].each { |file| require file }
 require_relative 'helpers/data_mapper'
@@ -10,12 +11,12 @@ class SlowFood < Sinatra::Base
   register Sinatra::Warden
   set :session_secret, "supersecret"
 
-  #Create a test User
-  # if User.count == 0
-  #  @user = User.create(username: "admin")
-  #  @user.password = "admin"
-  #  @user.save
-  # end
+    #Create a test User
+    if User.count == 0
+      @user = User.create(username: "admin")
+      @user.password = "admin"
+      @user.save
+    end
 
   use Warden::Manager do |config|
     # Tell Warden how to save our User info into a session.
@@ -52,8 +53,16 @@ class SlowFood < Sinatra::Base
   end
 
   get '/dish-creation' do
-    erb :dish_creation
+    erb  :dish_creation
   end
+
+  post '/dish-creation' do
+    env['capybara']
+    if click_button('Add Dish')
+      flash[:success] = "Dish successfully added"
+  end
+end
+
 
   # Login in should direct to logged-in page where you can add food, etc.
 
