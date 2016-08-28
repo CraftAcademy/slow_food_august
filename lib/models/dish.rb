@@ -8,4 +8,5 @@ class Dish
   property :name, String
   property :price, Integer
   property :category, String
+  validates_presence_of :name, :price, :category
 end
