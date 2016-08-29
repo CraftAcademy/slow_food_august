@@ -1,5 +1,6 @@
 require 'bundler'
 require 'capybara'
+require 'pry'
 Bundler.require
 Dir[File.join(File.dirname(__FILE__), 'models', '*.rb')].each { |file| require file }
 require_relative 'helpers/data_mapper'
@@ -57,11 +58,16 @@ class SlowFood < Sinatra::Base
   end
 
   post '/dish-creation' do
-    env['capybara']
-    if click_button('Add Dish')
+    dish = Dish.new
+    dish.name = params[:name]
+    dish.category = params[:category]
+    dish.price = params[:price]
+    if dish.save
       flash[:success] = "Dish successfully added"
+    end
   end
-end
+
+
 
 
   # Login in should direct to logged-in page where you can add food, etc.

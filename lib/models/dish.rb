@@ -1,5 +1,6 @@
 require 'data_mapper'
 
+#This is the Table
 
 class Dish
   include DataMapper::Resource
