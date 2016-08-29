@@ -1,9 +1,10 @@
 require 'bundler'
+require 'capybara'
+require 'pry'
 Bundler.require
 Dir[File.join(File.dirname(__FILE__), 'models', '*.rb')].each { |file| require file }
 require_relative 'helpers/data_mapper'
 require_relative 'helpers/warden'
-require 'pry'
 
 class SlowFood < Sinatra::Base
   enable :sessions
@@ -11,13 +12,12 @@ class SlowFood < Sinatra::Base
   register Sinatra::Warden
   set :session_secret, "supersecret"
 
-  #binding.pry
-  #Create a test User
-  if User.count == 0
-   @user = User.create(username: "admin")
-   @user.password = "admin"
-   @user.save
-  end
+    #Create a test User
+    if User.count == 0
+      @user = User.create(username: "admin")
+      @user.password = "admin"
+      @user.save
+    end
 
   use Warden::Manager do |config|
     # Tell Warden how to save our User info into a session.
@@ -53,13 +53,34 @@ class SlowFood < Sinatra::Base
     erb :login
   end
 
+  get '/dish-creation' do
+    erb  :dish_creation
+  end
+
+  post '/dish-creation' do
+    dish = Dish.new
+    dish.name = params[:name]
+    dish.category = params[:category]
+    dish.price = params[:price]
+    if dish.save
+      flash[:success] = "Dish successfully added"
+    end
+  end
+
+
+
+
   # Login in should direct to logged-in page where you can add food, etc.
 
   post '/auth/login' do
     env['warden'].authenticate!
     flash[:success] = "Successfully logged in #{current_user.username}"
-    if session[:return_to].nil?
+    if current_user.admin = true
+      redirect '/protected'
+
+    elsif session[:return_to].nil?
       redirect '/'
+
     else
       redirect session[:return_to]
       # Perhaps we need a return to '/' here?

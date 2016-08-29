@@ -9,4 +9,4 @@ Scenario: Allows a visitor to access a registration page
   When I fill in "Username:" with "admin"
   And I fill in "Password:" with "admin"
   And I click "Log In" button
-  Then I should see "Successfully logged in admin"
+  Then I should see "Successfully logged in user"
